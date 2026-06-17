@@ -10,32 +10,17 @@ import {
 } from "./gsap";
 import { nextIndex } from "../utils/content";
 
-type HeroController = MutableRefObject<((index: number) => void) | null>;
-
 export function useLandingMotion(
   root: RefObject<HTMLDivElement | null>,
-  setActiveHero: Dispatch<SetStateAction<number>>,
-  heroController: HeroController,
 ) {
   useGSAP(
     () => {
       const reduceMotion = window.matchMedia(breakpoints.reduced).matches;
-      const heroLayers = gsap.utils.toArray<HTMLElement>(".hero-layer");
-      const heroCopies = gsap.utils.toArray<HTMLElement>(".hero-copy");
-      const progressPaths = gsap.utils.toArray<SVGPathElement>(
-        ".hero-progress-path",
-      );
-      let currentHero = 0;
-      let progressTween: gsap.core.Tween | null = null;
       let smoother: ScrollSmoother | null = null;
-      let heroEnabled = false;
 
       if (reduceMotion) {
         gsap.set(".preloader", { display: "none" });
-        gsap.set(heroLayers, { autoAlpha: 0, yPercent: 0, scale: 1 });
-        gsap.set(heroLayers[0], { autoAlpha: 1 });
-        gsap.set(heroCopies, { autoAlpha: 0 });
-        gsap.set(heroCopies[0], { autoAlpha: 1 });
+        gsap.set(".hero-window-overlay", { display: "none" }); // Just show video if reduced motion
         document.body.classList.remove("is-loading");
       } else {
         document.body.classList.add("is-loading");
@@ -58,168 +43,122 @@ export function useLandingMotion(
         };
       });
 
-      const progressFor = (index: number) => {
-        progressTween?.kill();
-        gsap.set(progressPaths, { drawSVG: "0%" });
-        progressTween = gsap.fromTo(
-          progressPaths[index],
-          { drawSVG: "0%" },
-          {
-            drawSVG: "100%",
-            duration: motion.heroBeat,
-            ease: "none",
-            onComplete: () => goToHero(nextIndex(currentHero, heroLayers.length)),
-          },
-        );
-      };
-
-      const setInitialHero = () => {
-        gsap.set(heroLayers, {
-          yPercent: 100,
-          autoAlpha: 1,
-          scale: 1,
-          transformOrigin: "50% 50%",
-        });
-        gsap.set(heroLayers[0], { yPercent: 0 });
-        gsap.set(heroCopies, { autoAlpha: 0 });
-        gsap.set(heroCopies[0], { autoAlpha: 1 });
-      };
-
-      function goToHero(index: number) {
-        if (
-          reduceMotion ||
-          !heroEnabled ||
-          index === currentHero ||
-          !heroLayers[index]
-        ) {
-          return;
-        }
-
-        const outgoing = heroLayers[currentHero];
-        const incoming = heroLayers[index];
-        const outgoingCopy = heroCopies[currentHero];
-        const incomingCopy = heroCopies[index];
-        const outgoingChars = outgoingCopy.querySelectorAll(".hero-copy-char");
-        const incomingChars = incomingCopy.querySelectorAll(".hero-copy-char");
-
-        progressTween?.kill();
-        gsap.killTweensOf([outgoing, incoming, outgoingCopy, incomingCopy]);
-        gsap.set(incoming, { yPercent: 100, autoAlpha: 1, scale: 1 });
-        gsap.set(incomingCopy, { autoAlpha: 1 });
-        gsap.set(incomingChars, { yPercent: 110 });
-
-        gsap
-          .timeline({
-            defaults: { ease: motion.easeInOut },
-            onStart: () => {
-              currentHero = index;
-              setActiveHero(index);
-            },
-            onComplete: () => {
-              gsap.set(outgoing, { yPercent: 100, scale: 1, autoAlpha: 1 });
-              gsap.set(outgoingCopy, { autoAlpha: 0 });
-              progressFor(index);
-            },
-          })
-          .to(outgoing, { yPercent: -80, duration: 1 }, 0)
-          .to(outgoing, { scale: 0.85, autoAlpha: 0, duration: 0.7 }, 0.3)
-          .to(incoming, { yPercent: 0, duration: 1 }, 0)
-          .to(outgoingChars, { yPercent: -110, duration: 0.55, stagger: 0.018 }, 0)
-          .to(incomingChars, { yPercent: 0, duration: 0.7, stagger: 0.018 }, 0.12)
-          .to(
-            ".hero-chrome",
-            {
-              backgroundColor:
-                getComputedStyle(incoming).getPropertyValue("--slide-color"),
-              duration: 0.8,
-            },
-            0,
-          );
-      }
-
-      heroController.current = goToHero;
-
       if (!reduceMotion) {
-        setInitialHero();
-        const heroTextSplits = heroCopies.flatMap((copy) =>
-          gsap
-            .utils
-            .toArray<HTMLElement>(".hero-intro-split", copy)
-            .map(
-              (element) =>
-                new SplitText(element, {
-                  type: "chars",
-                  charsClass: "hero-copy-char",
-                }),
-            ),
-        );
-        const firstHeroSplits = heroTextSplits.slice(0, 4);
+        // Prepare text splits
+        const splitTextElements = gsap.utils.toArray<HTMLElement>(".hero-intro-split");
+        const splits = splitTextElements.map(el => new SplitText(el, { type: "chars,words", charsClass: "hero-copy-char" }));
+        
+        gsap.set(".hero-copy-char", { yPercent: 110, autoAlpha: 0 });
+        gsap.set(".hero-montage-container", { autoAlpha: 0 });
 
         const preloaderTimeline = gsap.timeline({
-            defaults: { ease: motion.easeInOut },
-            onComplete: () => {
-              document.body.classList.remove("is-loading");
-              gsap.set(".preloader", { display: "none" });
-              heroEnabled = true;
-              progressFor(0);
-              ScrollTrigger.refresh();
-            },
-          });
+          defaults: { ease: motion.easeInOut },
+          onComplete: () => {
+            document.body.classList.remove("is-loading");
+            gsap.set(".preloader", { display: "none" });
+            ScrollTrigger.refresh();
+          },
+        });
 
+        // Preloader Sequence
         preloaderTimeline
-          .fromTo(
-            ".preloader-column",
-            { y: "280vh" },
-            { y: "-120vh", duration: 1.8, ease: motion.easeStrong },
-            0,
-          )
-          .fromTo(
-            ".preloader-image",
-            { scale: 0.4 },
-            { scale: 1, duration: 1.8 },
-            0,
-          )
-          .fromTo(
-            ".preloader-image img",
-            { scale: 1.45, y: "24vh" },
-            { scale: 1, y: "-10vh", duration: 1.6 },
-            0.1,
-          )
-          .to(
-            ".preloader-center",
-            { width: "100vw", height: "100vh", duration: 0.8 },
-            0.8,
-          )
+          .fromTo(".preloader-column", { y: "280vh" }, { y: "-120vh", duration: 1.8, ease: motion.easeStrong }, 0)
+          .fromTo(".preloader-image", { scale: 0.4 }, { scale: 1, duration: 1.8 }, 0)
+          .fromTo(".preloader-image img", { scale: 1.45, y: "24vh" }, { scale: 1, y: "-10vh", duration: 1.6 }, 0.1)
+          .to(".preloader-center", { width: "100vw", height: "100vh", duration: 0.8 }, 0.8)
           .to(".preloader-grid", { columnGap: 0, duration: 0.7 }, 0.9)
           .to(".preloader-logo", { scale: 0, duration: 0.6 }, 1.6)
           .to(".preloader", { autoAlpha: 0, duration: 0.5 }, 1.8)
-          .fromTo(
-            ".header-reveal",
-            { scale: 0 },
-            { scale: 1, duration: 0.5, stagger: 0.06 },
-            1.9,
-          )
-          .fromTo(
-            ".brand-mark",
-            { yPercent: 112 },
-            { yPercent: 0, duration: 0.6 },
-            1.95,
-          )
-          .fromTo(
-            ".hero-selector",
-            { xPercent: 115, scale: 0.65 },
-            { xPercent: 0, scale: 1, duration: 0.65, stagger: 0.08 },
-            1.9,
-          );
+          .fromTo(".header-reveal", { scale: 0 }, { scale: 1, duration: 0.5, stagger: 0.06 }, 1.9)
+          .fromTo(".brand-mark", { yPercent: 112 }, { yPercent: 0, duration: 0.6 }, 1.95)
+          .to(".hero-montage-container", { autoAlpha: 1, duration: 1.5, ease: motion.easeStrong }, 1.8)
+          .to(".hero-copy-char", { yPercent: 0, autoAlpha: 1, duration: 0.8, stagger: 0.012, ease: "expo.out" }, 2.0);
 
-        firstHeroSplits.forEach((split, index) => {
-          preloaderTimeline.fromTo(
-            split.chars,
-            { yPercent: 110 },
-            { yPercent: 0, duration: 0.58, stagger: 0.012 },
-            1.9 + index * 0.05,
+        // Dynamic Montage Controller
+        const montageImages = gsap.utils.toArray<HTMLElement>(".hero-montage-image");
+        let currentMode: "pulse" | "gallery" = "pulse";
+        let activeIndex = 0;
+        let loopTimer: gsap.core.Tween | null = null;
+        let loopNextImage = () => {};
+
+        if (montageImages.length > 0) {
+          gsap.set(montageImages, { autoAlpha: 0 });
+          gsap.set(montageImages[0], { autoAlpha: 1 });
+
+          loopNextImage = () => {
+            const prevIndex = activeIndex;
+            activeIndex = (activeIndex + 1) % montageImages.length;
+
+            if (currentMode === "pulse") {
+              // Pulse Mode: Hard cuts, high energy
+              gsap.set(montageImages[activeIndex], { autoAlpha: 1 });
+              gsap.set(montageImages[prevIndex], { autoAlpha: 0 });
+              loopTimer = gsap.delayedCall(2.5, loopNextImage);
+            } else {
+              // Gallery Mode: Slow, elegant crossfades
+              gsap.to(montageImages[activeIndex], { autoAlpha: 1, duration: 1.5, ease: "power2.inOut" });
+              gsap.to(montageImages[prevIndex], { autoAlpha: 0, duration: 1.5, ease: "power2.inOut" });
+              loopTimer = gsap.delayedCall(3.5, loopNextImage);
+            }
+          };
+
+          // Start loop
+          loopTimer = gsap.delayedCall(2.5, loopNextImage);
+
+          // Slow continuous zoom on the whole container to make it smooth
+          gsap.fromTo(".hero-montage-container", 
+            { scale: 1.15 }, 
+            { scale: 1, duration: 25, ease: "none", repeat: -1, yoyo: true }
           );
+        }
+
+        // Scroll animations for Window Concept
+        const scrollTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: ".hero-window-section",
+            start: "top top",
+            end: "+=150%", // Scale happens over 1.5 viewport height of scroll
+            scrub: 0.5,
+            pin: true,
+            onUpdate: (self) => {
+              const newMode = self.progress > 0.8 ? "gallery" : "pulse";
+              if (newMode !== currentMode) {
+                currentMode = newMode;
+                if (loopTimer) loopTimer.kill();
+                
+                if (currentMode === "pulse") {
+                  // Switch back to pulse: Kill crossfades, do immediate hard cut
+                  gsap.killTweensOf(montageImages);
+                  loopNextImage();
+                } else {
+                  // Switch to gallery: Hold current image slightly longer, then start crossfades
+                  loopTimer = gsap.delayedCall(0.5, loopNextImage);
+                }
+              }
+            }
+          }
         });
+
+        // Fade out top and bottom supporting text quickly
+        scrollTl.to(".hero-window-text-top, .hero-window-text-bottom", {
+          autoAlpha: 0,
+          scale: 0.9,
+          duration: 0.15
+        }, 0);
+
+        // Scale the mask overlay infinitely to zoom through the 'M'
+        scrollTl.to(".hero-window-overlay", {
+          scale: 120,
+          transformOrigin: "50% 50%", // Zooms straight into the center
+          duration: 1,
+          ease: "expo.in"
+        }, 0);
+        
+        // Hide the overlay at the very end to prevent giant vector text aliasing and make the montage crisp
+        scrollTl.to(".hero-window-overlay", {
+          autoAlpha: 0,
+          duration: 0.1
+        }, 0.9);
       }
 
       if (!reduceMotion) {
@@ -327,7 +266,8 @@ export function useLandingMotion(
               anticipatePin: 1,
             },
           })
-          .to(".featured-frame", { width: "100vw", height: "100vh", borderRadius: 0, duration: 2.5 }, 0)
+          .to(".featured-frame", { width: "100vw", height: "100vh", left: "0vw", borderRadius: 0, duration: 2.5 }, 0)
+          .to(".featured-dummy", { xPercent: 20, autoAlpha: 0, duration: 1.5 }, 0)
           .to(".featured-blur", { backdropFilter: "blur(0px)", duration: 1.7 }, 0.8)
           .fromTo(".featured-kicker", { yPercent: 105 }, { yPercent: 0, duration: 0.8 }, 0.1);
 
@@ -487,8 +427,6 @@ export function useLandingMotion(
       window.addEventListener("pramukh:navigate", navigate);
 
       return () => {
-        heroController.current = null;
-        progressTween?.kill();
         media.revert();
         cursorCleanup?.();
         window.removeEventListener("pramukh:navigate", navigate);

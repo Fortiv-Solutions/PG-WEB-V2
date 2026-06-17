@@ -32,7 +32,7 @@ export function Header({
           </span>
         </a>
         <nav className="header-nav" aria-label="Primary navigation">
-          {navItems.slice(0, 2).map(([label, href]) => (
+          {navItems.slice(0, 4).map(([label, href]) => (
             <a
               className="header-nav-link"
               href={href}

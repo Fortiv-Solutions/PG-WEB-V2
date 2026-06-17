@@ -52,12 +52,10 @@ export function FlipText({ children }: { children: string }) {
 
 export function App() {
   const root = useRef<HTMLDivElement>(null);
-  const heroController = useRef<((index: number) => void) | null>(null);
-  const [activeHero, setActiveHero] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeOffice, setActiveOffice] = useState(0);
 
-  useLandingMotion(root, setActiveHero, heroController);
+  useLandingMotion(root);
   useMenuMotion(root, menuOpen);
 
   const navigate = (
@@ -95,11 +93,7 @@ export function App() {
       <div id="smooth-wrapper">
         <div id="smooth-content">
           <main>
-            <Hero 
-              heroSlides={heroSlides} 
-              activeHero={activeHero} 
-              heroController={heroController} 
-            />
+            <Hero />
 
             <Intro />
 

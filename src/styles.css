@@ -28,15 +28,15 @@
 
 :root {
   /* Colors */
-  --paper: #f7f7f0;
-  --ink: #1e1e1c;
-  --gold: #c4a359;
-  --gold-hover: #b39248;
-  --warm: #dfd3c4;
-  --dark: #11110f;
-  --dark-hover: #1c1c1a;
-  --line: rgb(30 30 28 / 18%);
-  --line-light: rgb(255 255 255 / 18%);
+  --paper: #ffffff;
+  --ink: #000000;
+  --gold: #666666;
+  --gold-hover: #333333;
+  --warm: #e5e5e5;
+  --dark: #000000;
+  --dark-hover: #1a1a1a;
+  --line: rgb(0 0 0 / 12%);
+  --line-light: rgb(255 255 255 / 15%);
 
   /* Spacing Scale */
   --space-1: 0.5rem;
@@ -49,8 +49,8 @@
   --space-16: 8rem;
 
   /* Typography */
-  --font-sans: "Sohne", Arial, sans-serif;
-  --font-serif: "Season", Georgia, serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
   /* Easing */
   --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -552,216 +552,135 @@ button:hover .flip-text > span {
   color: rgb(255 255 255 / 55%);
 }
 
-/* Hero */
-.hero {
+/* Hero Window Mask Concept */
+.hero-window-section {
   position: relative;
   height: 100svh;
-  min-height: 44rem;
+  background: #ffffff;
   overflow: hidden;
-  color: #fff;
-  background: #171714;
 }
 
-.hero-chrome {
+.hero-window-media {
   position: absolute;
-  z-index: 0;
   inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background-color: #111;
+  overflow: hidden;
 }
 
-.hero-media,
-.hero-layer,
-.hero-layer picture,
-.hero-layer img,
-.hero-layer video {
+.hero-montage-container {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
 }
 
-.hero-media {
-  z-index: 1;
-  inset: 1.2rem;
-  overflow: hidden;
-  border-radius: 0.45rem;
+.hero-montage-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  visibility: hidden;
 }
 
-.hero-layer {
-  overflow: hidden;
-  will-change: transform, opacity;
-}
-
-.hero-layer img,
-.hero-layer video {
+.hero-montage-image picture,
+.hero-montage-image img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
 }
 
-.hero-layer-1 img,
-.hero-layer-2 img {
-  animation: hero-drift 12s ease-in-out infinite alternate;
-}
-
-@keyframes hero-drift {
-  from {
-    transform: scale(1.02) translate3d(0, 0, 0);
-  }
-  to {
-    transform: scale(1.09) translate3d(0, -1.5%, 0);
-  }
-}
-
-.hero-shade {
+.hero-window-overlay {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(180deg, rgb(0 0 0 / 70%) 0%, transparent 25%),
-    linear-gradient(0deg, rgb(0 0 0 / 80%) 0%, rgb(0 0 0 / 40%) 40%, transparent 60%);
-}
-
-.hero-copy-stack {
-  position: absolute;
-  z-index: 4;
-  left: 4vw;
-  bottom: 11.5rem;
-  width: min(70rem, 83vw);
-}
-
-.hero-copy {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-}
-
-.hero-copy:not(:first-child) {
-  opacity: 0;
-}
-
-.hero-copy h1 {
-  overflow: hidden;
-  font-size: clamp(3.5rem, 8vw, 9.5rem);
-  line-height: 1.05;
-  letter-spacing: -0.04em;
-  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
-}
-
-.hero-title-line {
-  display: block;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-.hero-title-word {
-  display: inline-block;
-}
-
-.hero-title-word + .hero-title-word {
-  margin-left: 0.25em;
-}
-
-.hero-eyebrow,
-.hero-project {
-  overflow: hidden;
-  text-transform: uppercase;
-  font-size: 0.75rem;
-  letter-spacing: 0.2em;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
-}
-
-.hero-eyebrow {
-  margin-bottom: 1.5rem;
-  color: var(--gold);
-}
-
-.hero-project {
-  margin-top: 1.8rem;
-  color: rgba(255, 255, 255, 0.85);
-}
-
-.hero-bottom-bar {
-  position: absolute;
-  z-index: 5;
-  left: 4vw;
-  right: 4vw;
-  bottom: 2.5rem;
+  z-index: 2;
+  background-color: #ffffff;
+  color: #000000;
+  mix-blend-mode: screen;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-}
-
-.hero-selectors {
-  display: grid;
-  width: min(38rem, calc(100vw - 8vw));
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-}
-
-.hero-selector {
-  display: grid;
-  width: 100%;
-  min-width: 0;
-  grid-template-columns: 2.2rem 1fr;
-  gap: 0.8rem;
   align-items: center;
-  padding: 0;
-  color: rgb(255 255 255 / 65%);
-  background: transparent;
-  text-align: left;
-  transition: color 0.3s, transform 0.3s ease-out;
+  justify-content: center;
+  pointer-events: none;
+  will-change: transform;
+  transform-origin: center center;
 }
 
-.hero-selector:hover,
-.hero-selector.is-active {
-  color: #fff;
-  transform: translateY(-0.25rem);
-}
-
-.hero-selector svg {
-  width: 2.2rem;
-  height: 2.2rem;
-  overflow: visible;
-  transform: rotate(-90deg);
-}
-
-.hero-selector circle {
-  fill: none;
-  stroke: rgb(255 255 255 / 25%);
-  stroke-width: 1;
-}
-
-.hero-selector .hero-progress-path {
-  stroke: #fff;
-  stroke-width: 1.7;
-}
-
-.hero-selector strong,
-.hero-selector small {
-  display: block;
-}
-
-.hero-selector strong {
-  font-size: 0.82rem;
-  font-weight: 400;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-}
-
-.hero-selector small {
-  margin-top: 0.3rem;
-  font-size: 0.6rem;
-  line-height: 1.2;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.hero-meta {
+.hero-window-text-wrapper {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-window-text-top,
+.hero-window-text-bottom {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
   text-transform: uppercase;
-  font-size: 0.6rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  font-weight: 600;
+  text-align: center;
+}
+
+.hero-window-text-top {
+  top: 12vh;
+}
+
+.hero-window-text-bottom {
+  bottom: 8vh;
+}
+
+.hero-title-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero-tagline {
+  margin-top: 1rem;
+  font-family: var(--font-sans);
+  font-size: clamp(0.9rem, 1.5vw, 1.4rem);
+  font-weight: 600;
+  line-height: 1.25;
+  text-transform: uppercase;
   letter-spacing: 0.15em;
-  text-align: right;
-  color: rgba(255, 255, 255, 0.75);
+  color: #000000;
+  text-align: center;
+}
+
+@media (max-width: 1024px) {
+  .hero-tagline {
+    font-size: clamp(0.75rem, 1.2vw, 1rem);
+    margin-top: 0.5rem;
+  }
+}
+
+.hero-window-title {
+  font-family: var(--font-sans);
+  font-size: clamp(5rem, 15vw, 18rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 0.85;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.hero-title-inner {
+  display: block;
+}
+
+.hero-intro-split {
+  display: block;
+  overflow: hidden;
 }
 
 /* Intro */
@@ -843,12 +762,60 @@ button:hover .flip-text > span {
 .featured-frame {
   position: absolute;
   top: 50%;
-  left: 50%;
+  left: 5vw;
   width: 36vw;
   height: 52vh;
   overflow: hidden;
   border-radius: 0.8rem;
-  transform: translate(-50%, -50%);
+  transform: translateY(-50%);
+}
+
+.featured-dummy {
+  position: absolute;
+  top: 50%;
+  width: 36vw;
+  height: 52vh;
+  overflow: hidden;
+  border-radius: 0.8rem;
+  transform: translateY(-50%);
+}
+
+.featured-dummy-1 {
+  left: 43vw;
+}
+
+.featured-dummy-2 {
+  left: 81vw;
+}
+
+.featured-dummy img,
+.featured-dummy picture {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 15%;
+}
+
+.dummy-copy {
+  position: absolute;
+  z-index: 3;
+  right: 3vw;
+  bottom: 3rem;
+  left: 3vw;
+  opacity: 0.6;
+}
+
+.dummy-copy p {
+  margin-bottom: 0.7rem;
+  text-transform: uppercase;
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+}
+
+.dummy-copy h2 {
+  font-size: clamp(3rem, min(8vw, 12vh), 9rem);
 }
 
 .featured-media,
@@ -863,6 +830,7 @@ button:hover .flip-text > span {
 
 .featured-project img {
   object-fit: cover;
+  object-position: center 15%;
 }
 
 .featured-blur {
@@ -909,12 +877,12 @@ button:hover .flip-text > span {
 }
 
 .featured-copy-item h2 {
-  font-size: clamp(5rem, 11vw, 13rem);
+  font-size: clamp(5rem, min(11vw, 16vh), 13rem);
 }
 
 .featured-copy-item > span {
   display: block;
-  width: min(32rem, 40vw);
+  width: min(32rem, 100%);
   margin-top: 1rem;
   margin-left: auto;
   font-size: 0.9rem;
@@ -1815,6 +1783,10 @@ button:hover .flip-text > span {
 
   .featured-project:not(:first-child),
   .featured-copy-item:not(:first-child) {
+    display: none;
+  }
+
+  .featured-dummy {
     display: none;
   }
 

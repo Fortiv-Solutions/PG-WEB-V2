@@ -1,105 +1,44 @@
-import { CSSProperties, Dispatch, MutableRefObject, SetStateAction } from "react";
+import { projects } from "../../data";
 import { Picture } from "../Picture";
 
-export function Hero({
-  heroSlides,
-  activeHero,
-  heroController,
-}: {
-  heroSlides: any[];
-  activeHero: number;
-  heroController: MutableRefObject<((index: number) => void) | null>;
-}) {
+export function Hero() {
   return (
-    <section id="home" className="hero header-trigger">
-      <div
-        className="hero-chrome"
-        style={{ backgroundColor: heroSlides[0].color }}
-      />
-      <div className="hero-media">
-        {heroSlides.map((slide, index) => (
-          <div
-            className={`hero-layer hero-layer-${index}`}
-            style={{ "--slide-color": slide.color } as CSSProperties}
-            key={slide.id}
-            aria-hidden={activeHero !== index}
-          >
-            {slide.media.kind === "video" ? (
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
-                poster={slide.media.poster}
-                preload="metadata"
-              >
-                <source src={slide.media.src} type="video/mp4" />
-              </video>
-            ) : (
+    <section id="home" className="hero-window-section header-trigger">
+      {/* Background Image Sequence layer */}
+      <div className="hero-window-media">
+        <div className="hero-montage-container">
+          {projects.map((project, index) => (
+            <div key={project.name} className="hero-montage-image">
               <Picture
-                image={slide.media.image}
-                alt={slide.media.alt}
-                eager={index === 1}
+                image={project.image}
+                alt={project.name}
+                eager={index < 3} // Eager load the first few for performance
               />
-            )}
-            <div className="hero-shade" />
-          </div>
-        ))}
-      </div>
-
-      <div className="hero-copy-stack">
-        {heroSlides.map((slide) => (
-          <div className="hero-copy" key={slide.id}>
-            <p className="hero-eyebrow hero-intro-split">
-              {slide.eyebrow}
-            </p>
-            <h1>
-              <span className="hero-title-line hero-title-pair hero-intro-split">
-                <span className="hero-title-word">Designed.</span>
-                <span className="hero-title-word">Delivered.</span>
-              </span>
-              <span className="hero-title-line hero-intro-split">
-                Trusted.
-              </span>
-            </h1>
-            <p className="hero-project hero-intro-split">
-              {slide.name} · {slide.location}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      <div className="hero-bottom-bar">
-        <div className="hero-selectors" aria-label="Featured projects">
-          {heroSlides.map((slide, index) => (
-            <button
-              className={`hero-selector ${activeHero === index ? "is-active" : ""}`}
-              type="button"
-              onClick={() => heroController.current?.(index)}
-              aria-label={`Show ${slide.name}`}
-              key={slide.id}
-            >
-              <svg viewBox="0 0 48 48" aria-hidden="true">
-                <circle cx="24" cy="24" r="21" />
-                <circle
-                  className="hero-progress-path"
-                  cx="24"
-                  cy="24"
-                  r="21"
-                />
-              </svg>
-              <span>
-                <strong>{slide.name}</strong>
-                <small>{slide.type}</small>
-              </span>
-            </button>
+            </div>
           ))}
         </div>
+      </div>
 
-        <div className="hero-meta">
-          <span>60+ projects delivered</span>
-          <span>Pramukh Group © Since 1993</span>
-          <span>Surat · Vapi · Silvassa</span>
+      {/* The White Overlay that acts as a mask via mix-blend-mode */}
+      <div className="hero-window-overlay">
+        <div className="hero-window-text-wrapper">
+          <div className="hero-window-text-top">
+            <span className="hero-intro-split">A class of its own.</span>
+          </div>
+          
+          <div className="hero-title-container">
+            <h1 className="hero-window-title">
+              <span className="hero-title-inner">PRAMUKH.</span>
+            </h1>
+            <div className="hero-tagline">
+              Built on trust, chosen for your next property.
+            </div>
+          </div>
+
+          <div className="hero-window-text-bottom">
+            <span className="hero-intro-split">Since 1993</span>
+            <span className="hero-intro-split">Surat · Vapi · Silvassa</span>
+          </div>
         </div>
       </div>
     </section>

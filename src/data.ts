@@ -50,7 +50,7 @@ export const heroSlides: HeroSlide[] = [
     color: "#8e6d3d",
     media: {
       kind: "video",
-      src: "/media/pramukh-film.mp4",
+      src: "/media/video-new.mp4",
       poster: "/media/about-video-poster-1800.webp",
     },
   },
