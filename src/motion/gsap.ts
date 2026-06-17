@@ -3,6 +3,7 @@ import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
+import { CustomEase } from "gsap/CustomEase";
 import { useGSAP } from "@gsap/react";
 
 gsap.registerPlugin(
@@ -10,14 +11,18 @@ gsap.registerPlugin(
   ScrollSmoother,
   ScrollTrigger,
   SplitText,
+  CustomEase,
   useGSAP,
 );
 
-export { DrawSVGPlugin, gsap, ScrollSmoother, ScrollTrigger, SplitText, useGSAP };
+CustomEase.create("pramukh-ease", "M0,0 C0.16,1 0.3,1 1,1");
+CustomEase.create("pramukh-strong", "M0,0 C0.175,0.885 0.32,1.275 1,1");
+
+export { DrawSVGPlugin, gsap, ScrollSmoother, ScrollTrigger, SplitText, CustomEase, useGSAP };
 
 export const motion = {
-  easeInOut: "power2.inOut",
-  easeStrong: "power4.inOut",
+  easeInOut: "pramukh-ease",
+  easeStrong: "pramukh-strong",
   revealDuration: 0.85,
   heroBeat: 6,
 };

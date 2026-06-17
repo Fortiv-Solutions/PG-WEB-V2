@@ -27,16 +27,48 @@
 }
 
 :root {
-  color: #1e1e1c;
-  background: #f7f7f0;
-  font-family: "Sohne", Arial, sans-serif;
-  font-synthesis: none;
-  text-rendering: geometricPrecision;
+  /* Colors */
   --paper: #f7f7f0;
   --ink: #1e1e1c;
   --gold: #c4a359;
+  --gold-hover: #b39248;
   --warm: #dfd3c4;
+  --dark: #11110f;
+  --dark-hover: #1c1c1a;
   --line: rgb(30 30 28 / 18%);
+  --line-light: rgb(255 255 255 / 18%);
+
+  /* Spacing Scale */
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2rem;
+  --space-6: 3rem;
+  --space-8: 4rem;
+  --space-12: 6rem;
+  --space-16: 8rem;
+
+  /* Typography */
+  --font-sans: "Sohne", Arial, sans-serif;
+  --font-serif: "Season", Georgia, serif;
+
+  /* Easing */
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Shadows */
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
+
+  color: var(--ink);
+  background: var(--paper);
+  font-family: var(--font-sans);
+  font-synthesis: none;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 * {
@@ -87,6 +119,7 @@ video {
 button,
 a {
   cursor: pointer;
+  transition: transform 0.3s var(--ease-out-expo), color 0.3s var(--ease-out-expo), background-color 0.3s var(--ease-out-expo), opacity 0.3s var(--ease-out-expo), box-shadow 0.3s var(--ease-out-expo);
 }
 
 button:focus-visible,
@@ -105,19 +138,19 @@ p {
 h1,
 h2,
 h3 {
-  font-family: "Season", Georgia, serif;
+  font-family: var(--font-serif);
   font-weight: 300;
 }
 
 h2 {
   font-size: clamp(3rem, 6.5vw, 8rem);
-  line-height: 0.94;
+  line-height: 1.05;
   letter-spacing: -0.055em;
 }
 
 h3 {
   font-size: clamp(2rem, 3.2vw, 4rem);
-  line-height: 1;
+  line-height: 1.1;
   letter-spacing: -0.04em;
 }
 
@@ -135,7 +168,7 @@ h3 {
 .section-warm,
 .section-gold {
   position: relative;
-  padding: 8rem 3vw;
+  padding: var(--space-16) 4vw;
 }
 
 .section-light {
@@ -144,7 +177,7 @@ h3 {
 
 .section-dark {
   color: var(--paper);
-  background: #11110f;
+  background: var(--dark);
 }
 
 .section-warm {
@@ -159,12 +192,12 @@ h3 {
 .section-grid {
   display: grid;
   grid-template-columns: minmax(12rem, 0.65fr) minmax(0, 2fr);
-  gap: 4vw;
+  gap: var(--space-8);
 }
 
 .section-heading {
   align-items: start;
-  margin-bottom: 7rem;
+  margin-bottom: var(--space-12);
 }
 
 .section-label {
@@ -329,6 +362,7 @@ h3 {
   border: 1px solid transparent;
   border-radius: 0.45rem;
   pointer-events: auto;
+  transition: background-color 0.4s var(--ease-out-expo), border-color 0.4s var(--ease-out-expo);
 }
 
 .header-logo {
@@ -385,11 +419,17 @@ button:hover .flip-text > span {
   width: 3rem;
   height: 3rem;
   padding: 0.95rem 0.8rem;
-  border: 1px solid rgb(255 255 255 / 35%);
-  border-radius: 0.25rem;
-  background: rgb(255 255 255 / 10%);
+  border: none;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 8%);
   align-content: center;
   gap: 0.35rem;
+  transition: all 0.4s var(--ease-out-expo);
+}
+
+.menu-button:hover {
+  background: rgb(255 255 255 / 16%);
+  transform: scale(1.05);
 }
 
 .menu-button span {
@@ -459,6 +499,13 @@ button:hover .flip-text > span {
   border-radius: 50%;
   place-items: center;
   font-size: 1.4rem;
+  transition: all 0.4s var(--ease-out-expo);
+}
+
+.menu-close:hover span {
+  background: rgb(255 255 255 / 15%);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: scale(1.08);
 }
 
 .menu-links {
@@ -592,7 +639,7 @@ button:hover .flip-text > span {
 .hero-copy h1 {
   overflow: hidden;
   font-size: clamp(3.5rem, 8vw, 9.5rem);
-  line-height: 0.9;
+  line-height: 1.05;
   letter-spacing: -0.04em;
   text-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
 }
@@ -783,6 +830,7 @@ button:hover .flip-text > span {
   text-transform: uppercase;
   letter-spacing: 0.12em;
 }
+
 
 /* Featured */
 .featured-pin {
@@ -1346,12 +1394,14 @@ button:hover .flip-text > span {
   text-transform: uppercase;
   font-size: 0.65rem;
   letter-spacing: 0.14em;
-  transition: color 0.35s, background 0.35s;
+  transition: all 0.4s var(--ease-out-expo);
 }
 
 .round-button:hover {
   color: #111;
   background: #fff;
+  transform: scale(1.08);
+  box-shadow: 0 0 24px rgba(255, 255, 255, 0.4);
 }
 
 /* Ongoing */
@@ -1430,6 +1480,14 @@ button:hover .flip-text > span {
   text-transform: uppercase;
   font-size: 0.68rem;
   letter-spacing: 0.12em;
+  transition: all 0.4s var(--ease-out-expo);
+}
+
+.footer-button:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--dark);
+  transform: scale(1.05);
 }
 
 .footer-main {

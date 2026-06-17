@@ -170,46 +170,46 @@ export function useLandingMotion(
           .fromTo(
             ".preloader-column",
             { y: "280vh" },
-            { y: "-120vh", duration: 2.7, ease: motion.easeStrong },
+            { y: "-120vh", duration: 1.8, ease: motion.easeStrong },
             0,
           )
           .fromTo(
             ".preloader-image",
             { scale: 0.4 },
-            { scale: 1, duration: 2.7 },
+            { scale: 1, duration: 1.8 },
             0,
           )
           .fromTo(
             ".preloader-image img",
             { scale: 1.45, y: "24vh" },
-            { scale: 1, y: "-10vh", duration: 2.5 },
-            0.2,
+            { scale: 1, y: "-10vh", duration: 1.6 },
+            0.1,
           )
           .to(
             ".preloader-center",
-            { width: "100vw", height: "100vh", duration: 1.05 },
-            1.1,
+            { width: "100vw", height: "100vh", duration: 0.8 },
+            0.8,
           )
-          .to(".preloader-grid", { columnGap: 0, duration: 0.9 }, 1.2)
-          .to(".preloader-logo", { scale: 0, duration: 0.85 }, 2.35)
-          .to(".preloader", { autoAlpha: 0, duration: 0.65 }, 2.55)
+          .to(".preloader-grid", { columnGap: 0, duration: 0.7 }, 0.9)
+          .to(".preloader-logo", { scale: 0, duration: 0.6 }, 1.6)
+          .to(".preloader", { autoAlpha: 0, duration: 0.5 }, 1.8)
           .fromTo(
             ".header-reveal",
             { scale: 0 },
-            { scale: 1, duration: 0.65, stagger: 0.06 },
-            2.65,
+            { scale: 1, duration: 0.5, stagger: 0.06 },
+            1.9,
           )
           .fromTo(
             ".brand-mark",
             { yPercent: 112 },
-            { yPercent: 0, duration: 0.7 },
-            2.75,
+            { yPercent: 0, duration: 0.6 },
+            1.95,
           )
           .fromTo(
             ".hero-selector",
             { xPercent: 115, scale: 0.65 },
-            { xPercent: 0, scale: 1, duration: 0.85, stagger: 0.08 },
-            2.65,
+            { xPercent: 0, scale: 1, duration: 0.65, stagger: 0.08 },
+            1.9,
           );
 
         firstHeroSplits.forEach((split, index) => {
@@ -217,7 +217,7 @@ export function useLandingMotion(
             split.chars,
             { yPercent: 110 },
             { yPercent: 0, duration: 0.58, stagger: 0.012 },
-            2.62 + index * 0.06,
+            1.9 + index * 0.05,
           );
         });
       }
@@ -226,37 +226,20 @@ export function useLandingMotion(
         gsap
           .timeline({
             scrollTrigger: {
-              trigger: ".header-trigger",
+              trigger: "body",
               start: "80px top",
-              end: "bottom 30%",
-              once: true,
+              toggleActions: "play none none reverse",
             },
           })
-          .to(".site-header", { paddingInline: "1.1rem", duration: 0.55 }, 0)
-          .to(
-            ".header-shell",
-            {
-              width: "12rem",
-              marginInline: "auto",
-              backgroundColor: "rgba(20,20,19,.62)",
-              borderColor: "rgba(255,255,255,.2)",
-              backdropFilter: "blur(12px)",
-              duration: 0.6,
-            },
-            0,
-          )
-          .to(
-            ".header-nav-link, .header-contact",
-            { autoAlpha: 0, x: (index) => (index % 2 ? 60 : -60), duration: 0.3 },
-            0,
-          )
-          .to(".header-logo", { scale: 0.78, xPercent: -14, duration: 0.4 }, 0)
-          .fromTo(
-            ".menu-button",
-            { x: "2vw" },
-            { x: 0, duration: 0.4 },
-            0.08,
-          );
+          .to(".site-header", { 
+            backgroundColor: "rgba(20,20,19,0.85)", 
+            backdropFilter: "blur(16px)", 
+            borderBottom: "1px solid rgba(255,255,255,0.08)",
+            paddingTop: "1rem",
+            paddingBottom: "1rem",
+            duration: 0.4 
+          }, 0)
+          .to(".header-logo", { scale: 0.85, transformOrigin: "left center", duration: 0.4 }, 0);
       }
 
       if (!reduceMotion) {
@@ -339,7 +322,7 @@ export function useLandingMotion(
               trigger: ".featured-pin",
               start: "top top",
               end: () => `+=${window.innerHeight * 7}`,
-              scrub: 0.8,
+              scrub: 1.2,
               pin: true,
               anticipatePin: 1,
             },
@@ -371,7 +354,7 @@ export function useLandingMotion(
               trigger: ".portfolio-pin",
               start: "top top",
               end: () => `+=${portfolioTrack.scrollWidth}`,
-              scrub: 0.8,
+              scrub: 1.2,
               pin: true,
               invalidateOnRefresh: true,
             },
@@ -385,7 +368,7 @@ export function useLandingMotion(
             trigger: ".ownership-pin",
             start: "top top",
             end: () => `+=${window.innerHeight * 4.5}`,
-            scrub: 0.65,
+            scrub: 1.1,
             pin: true,
           },
         });
